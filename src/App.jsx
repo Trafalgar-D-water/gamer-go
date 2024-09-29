@@ -17,7 +17,7 @@ function App() {
         </ThemeProvider>
       </HelmetProvider>
     </Provider>
-  );
+  )
 }
 
 export default App;
@@ -28,3 +28,5 @@ export default App;
 // github check
 
 // one more check
+
+// me who
