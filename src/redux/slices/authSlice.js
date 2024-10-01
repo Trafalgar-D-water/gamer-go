@@ -22,6 +22,24 @@ export const signup = createAsyncThunk(
     }
 )
 
+export const login = createAsyncThunk(
+    'auth/login',
+    async ({ email, password }, { rejectWithValue }) => {
+        try{
+            const response = await axios.post(`${API_URL}/login`, {
+                email,
+                password,
+            });
+            console.log(response.data)
+            localStorage.setItem('jwtToken', response.data.token);
+            return response.data;
+        }
+        catch(error){
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
 export const verifyEmail = createAsyncThunk(
     'auth/verifyEmail',
     async (token, { rejectWithValue }) => {
@@ -54,6 +72,7 @@ const authSlice = createSlice({
             state.user = null;
             state.token = null;
             state.isAuthenticated = false;
+            localStorage.removeItem('jwtToken');
         },
         clearError: (state) => {
             state.error = null;
@@ -103,6 +122,21 @@ const authSlice = createSlice({
             state.emailSent = true; // Set this to true when signup is successful
             state.error = null;
         })
+        .addCase(login.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+          })
+          .addCase(login.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isAuthenticated = true;
+            state.token = action.payload.token;
+            state.user = action.payload.user;
+            state.error = null;
+          })
+          .addCase(login.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload?.message || 'Login failed';
+          });
     },
 })
 

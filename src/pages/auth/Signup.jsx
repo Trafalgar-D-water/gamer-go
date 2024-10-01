@@ -76,7 +76,7 @@ export default function Signup() {
     console.log(username, email, password, dob)
     e.preventDefault();
     if (agreeTerms) {
-      dispatch(signup({ username, email, password, dob }));
+      dispatch(signup({ username, email, password, dob }))
 
     } else {
       // Handle case where user hasn't agreed to terms

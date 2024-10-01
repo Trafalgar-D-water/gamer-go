@@ -9,8 +9,9 @@ import { element } from 'prop-types';
 const HomePage = lazy(() => import('../pages/Home'));
 const LoginPage = lazy(() => import('../pages/auth/Login'));
 const SignupPage = lazy(() => import('../pages/auth/Signup'));
-
 const Dashboard = lazy(() => import('../pages/DashBoard'));
+const EditProfile = lazy(() => import('../components/dashbaord/EditProfile'));
+
 
 const Loadable = (Component) => (props) => (
   <Suspense fallback={<LoadingScreen />}>
@@ -24,6 +25,7 @@ const LoadableLoginPage = Loadable(LoginPage);
 const LoadableSignupPage = Loadable(SignupPage);
 const LoadableEmailVerification = Loadable(EmailVerification);
 const LoadableDashboard = Loadable(Dashboard);
+const LoadableEditProfile = Loadable(EditProfile);
 
 export default function Router() {
   return useRoutes([
@@ -40,6 +42,7 @@ export default function Router() {
       element: <AuthGuard><Outlet /></AuthGuard>,
       children: [
         { path: 'dashboard', element: <LoadableDashboard /> },
+        { path: 'edit-profile', element: <LoadableEditProfile /> },
         // Add other protected routes here
       ]
     },
