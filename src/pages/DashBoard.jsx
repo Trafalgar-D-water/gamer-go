@@ -1,7 +1,9 @@
-import React from 'react';
+import React ,{useState} from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, Typography, TextField, Button } from '@mui/material';
+import { Box, Typography, TextField, Button  ,IconButton} from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Sidebar from '../components/dashbaord/SideBar';
+import Profile from '../components/dashbaord/Profile';
 
 const DashboardContainer = styled('div')({
   display: 'flex',
@@ -20,6 +22,9 @@ const MainContent = styled('div')(({ theme }) => ({
 const Header = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
   backgroundColor: theme.palette.grey[900],
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 }));
 
 const ContentArea = styled('div')(({ theme }) => ({
@@ -46,6 +51,14 @@ const GroupBox = styled('div')(({ theme }) => ({
 }));
 
 const Dashboard = () => {
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const handleProfileClick = () => {
+    setIsProfileOpen(true);
+  };
+
+  const handleProfileClose = () => {
+    setIsProfileOpen(false);
+  };
   return (
     <DashboardContainer>
       <Sidebar />
@@ -57,6 +70,9 @@ const Dashboard = () => {
             placeholder="Search..."
             sx={{ backgroundColor: 'grey.700', borderRadius: 1 }}
           />
+          <IconButton onClick={handleProfileClick} sx={{ color: 'white' }}>
+            <AccountCircleIcon fontSize="large" />
+          </IconButton>
         </Header>
         <ContentArea>
           <Typography variant="h4" gutterBottom>
@@ -77,6 +93,7 @@ const Dashboard = () => {
           </TopGroups>
         </ContentArea>
       </MainContent>
+      {isProfileOpen && <Profile onClose={handleProfileClose} />}
     </DashboardContainer>
   );
 };

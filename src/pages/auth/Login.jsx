@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch , useSelector} from 'react-redux';
+import { Link as RouterLink  ,useNavigate} from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Box, Typography, TextField, Button, Link, Checkbox, FormControlLabel } from '@mui/material';
 import Page from '../../components/Page';
+import { login  ,clearError} from '../../redux/slices/authSlice';
+
 
 const RootStyle = styled('div')({
   display: 'flex',
@@ -33,13 +37,36 @@ const InputStyle = styled(TextField)(({ theme }) => ({
 }));
 
 export default function LoginPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const {loading , error , isAuthenticated} = useSelector((state) => state.auth);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fadeIn, setFadeIn] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  
+useEffect(()=>{
+  if(isAuthenticated){
+    navigate('/dashboard');
+  }
+  return () => {
+    dispatch(clearError());
+  };
+},[isAuthenticated,navigate,dispatch])
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle login logic here
     console.log('Login attempt with:', { email, password });
+    dispatch(login({ email, password })).unwrap()
+    .then(() => {
+      navigate('/dashboard');
+    })
+    .catch((error) => {
+      console.error('Login failed:', error);
+    });
   };
 
   return (
@@ -94,7 +121,7 @@ export default function LoginPage() {
             />
 
             <Typography variant="body2" align="center">
-              Need an account? <Link href="/register">Register</Link>
+              Need an account? <Link component={RouterLink} to="/signup">Register</Link>
             </Typography>
           </form>
         </ContentStyle>
