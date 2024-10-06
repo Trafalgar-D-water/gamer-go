@@ -1,20 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { List, ListItem, Avatar, Tooltip } from '@mui/material';
+import { List, ListItem, Avatar, Tooltip, CircularProgress } from '@mui/material';
 import { Add as AddIcon, Explore as ExploreIcon } from '@mui/icons-material';
+import AddServerDialog from './AddServerDialog';
 
 const SidebarContainer = styled('div')(({ theme }) => ({
   width: '72px',
-  height: 'calc(100vh - 24px)', // Slightly shorter than viewport
+  height: '100vh',
   backgroundColor: theme.palette.grey[900],
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   padding: theme.spacing(1, 0),
   overflowY: 'auto',
-  position: 'fixed',
-  left: '12px',
-  top: '12px',
   borderRadius: '16px',
   boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
 }));
@@ -31,35 +29,61 @@ const ServerIcon = styled(Avatar)(({ theme }) => ({
   },
 }));
 
-const Sidebar = () => {
-  const servers = ['D', 'S1', 'S2', 'S3', 'S4'];
+const Sidebar = ({ servers, onServerSelect, onAddServer, isLoading }) => {
+  const [isAddServerDialogOpen, setIsAddServerDialogOpen] = useState(false);
+
+  const handleAddServer = (newServer) => {
+    console.log('New server added:', newServer);
+    onAddServer(newServer);
+  };
 
   return (
     <SidebarContainer>
-      <ServerIcon sx={{ backgroundColor: 'primary.main' }}>D</ServerIcon>
       <List>
-        {servers.map((server, index) => (
-          <ListItem key={index} disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Tooltip title={`Server ${index + 1}`} placement="right">
-              <ServerIcon>{server}</ServerIcon>
-            </Tooltip>
+        {isLoading ? (
+          <ListItem sx={{ justifyContent: 'center' }}>
+            <CircularProgress />
           </ListItem>
-        ))}
-        <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Tooltip title="Add a Server" placement="right">
-            <ServerIcon sx={{ backgroundColor: 'success.main' }}>
-              <AddIcon />
-            </ServerIcon>
-          </Tooltip>
-        </ListItem>
-        <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Tooltip title="Explore Public Servers" placement="right">
-            <ServerIcon sx={{ backgroundColor: 'info.main' }}>
-              <ExploreIcon />
-            </ServerIcon>
-          </Tooltip>
-        </ListItem>
+        ) : (
+          <>
+            {servers.map((server) => (
+              <ListItem key={server.id} disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Tooltip title={server.name} placement="right">
+                  <ServerIcon onClick={() => onServerSelect(server)}>
+                    {server.icon ? (
+                      <img src={server.icon} alt={server.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      (server.name && server.name.charAt(0).toUpperCase()) || '?'
+                    )}
+                  </ServerIcon>
+                </Tooltip>
+              </ListItem>
+            ))}
+            <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Tooltip title="Add a Server" placement="right">
+                <ServerIcon
+                  sx={{ backgroundColor: 'success.main' }}
+                  onClick={() => setIsAddServerDialogOpen(true)}
+                >
+                  <AddIcon />
+                </ServerIcon>
+              </Tooltip>
+            </ListItem>
+            <ListItem disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Tooltip title="Explore Public Servers" placement="right">
+                <ServerIcon sx={{ backgroundColor: 'info.main' }}>
+                  <ExploreIcon />
+                </ServerIcon>
+              </Tooltip>
+            </ListItem>
+          </>
+        )}
       </List>
+      <AddServerDialog
+        open={isAddServerDialogOpen}
+        onClose={() => setIsAddServerDialogOpen(false)}
+        onAddServer={handleAddServer}
+      />
     </SidebarContainer>
   );
 };

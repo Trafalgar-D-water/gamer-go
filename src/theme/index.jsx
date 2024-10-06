@@ -9,7 +9,7 @@ import componentsOverride from './overrides';
 import shadows, { customShadows } from './shadows';
 
 export default function ThemeProvider({ children }) {
-  const [themeMode, setThemeMode] = useState('light'); // Default to light theme
+  const [themeMode, setThemeMode] = useState('dark'); // Default to light theme
 
   const themeOptions = useMemo(
     () => ({
