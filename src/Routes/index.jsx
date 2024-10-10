@@ -11,6 +11,8 @@ const LoginPage = lazy(() => import('../pages/auth/Login'));
 const SignupPage = lazy(() => import('../pages/auth/Signup'));
 const Dashboard = lazy(() => import('../pages/DashBoard'));
 const EditProfile = lazy(() => import('../components/dashbaord/EditProfile'));
+const Allserver = lazy(() => import('../pages/Allserver'))
+const ServerView = lazy(() => import('../pages/ServerView'));
 
 
 const Loadable = (Component) => (props) => (
@@ -26,6 +28,8 @@ const LoadableSignupPage = Loadable(SignupPage);
 const LoadableEmailVerification = Loadable(EmailVerification);
 const LoadableDashboard = Loadable(Dashboard);
 const LoadableEditProfile = Loadable(EditProfile);
+const LoadableAllServers = Loadable(Allserver); 
+const LoadableServerView = Loadable(ServerView);
 
 export default function Router() {
   return useRoutes([
@@ -43,6 +47,8 @@ export default function Router() {
       children: [
         { path: 'dashboard', element: <LoadableDashboard /> },
         { path: 'edit-profile', element: <LoadableEditProfile /> },
+        { path: 'all-servers', element: <LoadableAllServers /> }, 
+        { path: 'server/:serverId', element: <LoadableServerView /> },
         // Add other protected routes here
       ]
     },

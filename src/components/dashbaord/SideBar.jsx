@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { List, ListItem, Avatar, Tooltip, CircularProgress } from '@mui/material';
+import { List, ListItem, Avatar, Tooltip, CircularProgress , Typography} from '@mui/material';
 import { Add as AddIcon, Explore as ExploreIcon } from '@mui/icons-material';
 import AddServerDialog from './AddServerDialog';
+import { useNavigate } from 'react-router-dom';
 
 const SidebarContainer = styled('div')(({ theme }) => ({
   width: '72px',
@@ -31,11 +32,17 @@ const ServerIcon = styled(Avatar)(({ theme }) => ({
 
 const Sidebar = ({ servers, onServerSelect, onAddServer, isLoading }) => {
   const [isAddServerDialogOpen, setIsAddServerDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleAddServer = (newServer) => {
     console.log('New server added:', newServer);
     onAddServer(newServer);
   };
+
+  const handleServerClick = (server) => {
+    onServerSelect(server);
+    navigate(`/server/${server._id}`);
+  }
 
   return (
     <SidebarContainer>
@@ -46,10 +53,10 @@ const Sidebar = ({ servers, onServerSelect, onAddServer, isLoading }) => {
           </ListItem>
         ) : (
           <>
-            {servers.map((server) => (
-              <ListItem key={server.id} disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
+            {servers && servers.length > 0 && servers.map((server) => (
+              <ListItem key={server._id} disablePadding sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Tooltip title={server.name} placement="right">
-                  <ServerIcon onClick={() => onServerSelect(server)}>
+                  <ServerIcon onClick={() => handleServerClick(server)}>
                     {server.icon ? (
                       <img src={server.icon} alt={server.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
