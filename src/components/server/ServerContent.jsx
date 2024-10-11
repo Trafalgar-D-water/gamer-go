@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { Typography, List, ListItem, ListItemIcon, ListItemText, TextField, IconButton, Avatar, Divider } from '@mui/material';
 import { Add as AddIcon, Tag as TagIcon, VolumeUp as VolumeUpIcon, EmojiEmotions, GifBox, AttachFile, Send } from '@mui/icons-material';
+import { getSocket } from '../../config/socket.config';
 
 const ServerContentContainer = styled('div')({
   display: 'flex',
@@ -16,12 +17,12 @@ const ChannelSidebar = styled('div')(({ theme }) => ({
   overflowY: 'auto',
 }));
 
-const ChatArea = styled('div')({
+const ChatArea = styled('div')(({ theme }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: theme => theme.palette.grey[800],
-});
+  backgroundColor: theme.palette.grey[800],
+}));
 
 const ChatHeader = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
@@ -49,7 +50,26 @@ const UserSidebar = styled('div')(({ theme }) => ({
   overflowY: 'auto',
 }));
 
-const ServerContent = ({ server }) => {
+const ServerContent = ({ server, onlineMembers , setOnlineMembers }) => {
+  
+  useEffect(() => {
+    const socket = getSocket();
+
+    socket.on('memberJoined', (data) => {
+      console.log('data of socket sended by server to client ' , data)
+      if (data.guildId === server?._id) {
+        console.log('New member joined:', data.newMember.username);
+        setOnlineMembers(prevMembers => [...prevMembers, data.newMember]);
+      }
+    });
+
+    return () => {
+      socket.off('memberJoined');
+    };
+  }, [server , setOnlineMembers]);
+
+  
+
   return (
     <ServerContentContainer>
       <ChannelSidebar>
@@ -104,12 +124,20 @@ const ServerContent = ({ server }) => {
         </InputArea>
       </ChatArea>
       <UserSidebar>
-        <Typography variant="subtitle2" color="textSecondary" gutterBottom>ONLINE — 1</Typography>
+        <Typography variant="subtitle2" color="textSecondary" gutterBottom>ONLINE — {onlineMembers.length}</Typography>
         <List>
-          <ListItem>
-            <ListItemIcon><Avatar sx={{ width: 32, height: 32 }}>Z</Avatar></ListItemIcon>
-            <ListItemText primary="Zoro" secondary="Online" />
-          </ListItem>
+          {onlineMembers && onlineMembers.length > 0 ? (
+            onlineMembers.map((member) => (
+              <ListItem key={member.userId}>
+                <ListItemIcon><Avatar sx={{ width: 32, height: 32 }}>{member.username[0]}</Avatar></ListItemIcon>
+                <ListItemText primary={member.username} secondary="Online" />
+              </ListItem>
+            ))
+          ) : (
+            <ListItem>
+              <ListItemText primary="No online members" />
+            </ListItem>
+          )}
         </List>
         <Divider />
         <Typography variant="subtitle2" color="textSecondary" gutterBottom>OFFLINE — 0</Typography>

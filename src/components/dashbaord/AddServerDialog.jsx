@@ -28,7 +28,7 @@ const AddServerDialog = ({ open, onClose, onAddServer }) => {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` // Assuming you store the JWT in localStorage
+          'Authorization': `Bearer ${localStorage.getItem('jwtToken')}` 
         },
         body: JSON.stringify({ name, logo, isPublic }),
       });

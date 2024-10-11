@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Typography, List, ListItem, ListItemText, Button, CircularProgress } from '@mui/material';
-import { fetchAllServers } from '../service/serverService';
+import { useNavigate } from 'react-router-dom';
+import { fetchAllServers, joinServer } from '../service/serverService';
 import Page from '../components/Page';
+import { getSocket } from '../config/socket.config';
+
 
 const AllServersContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(3),
@@ -25,6 +28,8 @@ const LoadingContainer = styled('div')({
 const AllServers = () => {
   const [servers, setServers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error , setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadServers = async () => {
@@ -42,16 +47,32 @@ const AllServers = () => {
     loadServers();
   }, []);
 
-  const handleJoinServer = (serverId) => {
-    console.log('Joining server with ID:', serverId);
-    const serverToJoin = servers.find(server => server._id === serverId);
-    if (serverToJoin) {
-      console.log('Joining server:', serverToJoin);
-      // Implement your join logic here
-    } else {
-      console.error('Server not found for ID:', serverId);
+  // const handleJoinServer = (serverId) => {
+  //   console.log('Joining server with ID:', serverId);
+  //   const serverToJoin = servers.find(server => server._id === serverId);
+  //   if (serverToJoin) {
+  //     console.log('Joining server:', serverToJoin);
+  //     // Implement your join logic here
+  //   } else {
+  //     console.error('Server not found for ID:', serverId);
+  //   }
+  // };
+
+  const handleJoinServer = async (serverId) =>{
+    try{
+      const response = await joinServer(serverId);
+      console.log('joined server resposne :' , response);
+
+      // const socket = getSocket();
+      // socket.connect();
+      // socket.emit('joined-server' , serverId);
+      navigate(`/server/${serverId}`);
     }
-  };
+    catch(error){
+      console.error("Error joining server:", error);
+      setError(error.message || 'Failed to join server. Please try again.');
+    }
+  }
   if (isLoading) {
     return (
       <LoadingContainer>
