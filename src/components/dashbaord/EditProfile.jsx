@@ -65,37 +65,7 @@ const ProfileField = styled(TextField)(({ theme }) => ({
 const EditProfile = () => {
   const dispatch = useDispatch();
   const profile = useSelector((state)=>state.profile)
-//   const [profile, setProfile] = useState({
-//     username: '',
-//     avatar: '',
-//     bio: '',
-//     role: { isPlayer: true, isCoach: false },
-//     skills: [],
-//     gamePreferences: [],
-//     rank: '',
-//     coachProfile: {
-//       experience: '',
-//       coachingSpecializations: [],
-//       rates: 0,
-//       availability: { days: [], times: { start: '', end: '' } },
-//     },
-//     preferences: { theme: 'dark', notifications: true },
-//   });
   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     fetchProfile();
-//   }, []);
-
-//   const fetchProfile = async () => {
-//     try {
-//       const response = await fetch('/api/profile');
-//       const data = await response.json();
-//       setProfile(data);
-//     } catch (error) {
-//       console.error('Error fetching profile:', error);
-//     }
-//   };
 
 const handleFieldChange = (field) => (event) => {
     dispatch(updateProfileField({ field, value: event.target.value }));
@@ -128,11 +98,6 @@ const handleFieldChange = (field) => (event) => {
 
   const handleSave = async () => {
     try {
-    //   await fetch('/api/profile', {
-    //     method: 'PUT',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(profile),
-    //   });
       navigate('/dashboard');
     } catch (error) {
       console.error('Error saving profile:', error);

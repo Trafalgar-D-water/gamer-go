@@ -38,13 +38,8 @@ const ProfileAvatar = styled(Avatar)(({ theme }) => ({
 //-------------------------------------------------------------------------------------------
 const Profile = ({ onClose ,onEditProfile }) => {
     const dispatch = useDispatch();
-//   const [profile, setProfile] = useState({
-//     username: '',
-//     email: '',
-//     bio: '',
-//   });
+
     const profile = useSelector((state)=>state.profile)
-    // console.log(profile)
   const navigate = useNavigate();
 
   useEffect(() => {
